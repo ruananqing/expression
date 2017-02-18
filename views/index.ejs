@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+
+    <title>Expression说说</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/jumbotron.css" rel="stylesheet">
+
+    <style type="text/css">
+        #alert-window {
+            display: none;
+        }
+
+        .avatar {
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        #avatar{
+            width: 100px;
+            border-radius: 50%;
+        }
+
+        .grid {
+            height: 200px;
+        }
+
+        #allExpressions {
+            height: auto;
+        }
+
+        .tpl-datetime {
+            color: #265a88;
+        }
+
+        .tpl-content {
+
+            color: black;
+        }
+
+        .tpl-username {
+            color: #204d74;
+        }
+
+        .tpl-content, .tpl-datetime, .tpl-button {
+            padding: 0 0 0 60px;
+        }
+
+        textarea {
+            //width: auto;
+        }
+    </style>
+
+
+    <script src="/js/jquery-1.11.3.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/underscore-noflect.js"></script>
+
+</head>
+
+<body>
+
+<!-- 应用header.ejs模板拼合导航栏 -->
+<% include header.ejs %>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+    <!--用户没登录显示的界面-->
+    <% if(!login) { %>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h1>
+                    欢迎！
+                </h1>
+                <P>Expression说说是我们的交流空间，欢迎注册！</P>
+                <p><a class="btn btn-primary btn-lg" href="/register" role="button">注册 &raquo;</a></p>
+            </div>
+
+            <div class="col-lg-3">
+                <P>已有账号登录</P>
+
+                <form>
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input type="text" class="form-control" id="username" placeholder="用户名，可以是中文，不能和别人重复">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="password" class="form-control" id="password" placeholder="密码，至少6位">
+                    </div>
+
+                    <button type="button" id="login" class="btn btn-success">登陆</button>
+                </form>
+
+                <div class="alert alert-danger" role="alert" id="alert-window">
+                    用户名已被注册占用，请更换用户名
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <% }else{ %>
+    <!--用户已经登录显示的界面-->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-1">
+                <a href="/setAvatar"><img id="avatar" src="/avatar/<%= avatar %>" alt="avatar" /></a>
+            </div>
+            <div class="col-lg-4 col-lg-offset-1">
+                <p><%= username %></p>
+                <textarea name="content" id="content" cols="40" rows="4" placeholder="Share your expressions now!"></textarea>
+                <a><button type="button" id="doExpress" class="btn btn-success">发表说说</button></a>
+            </div>
+        </div>
+
+    </div>
+
+    <% } %>
+</div>
+
+<div class="container">
+    <!-- 分页条-->
+    <nav>
+        <ul class="pagination">
+
+        </ul>
+    </nav>
+
+    <script type="text/javascript">
+        //分页条的Ajax
+
+
+        $.get("/getAllExpsAmount", function (result) {
+            var amount = parseInt(result);
+            //总页数
+            var pageamount = Math.ceil(amount / 20);
+            console.log("pageamount is " + pageamount);
+            for (var i = 0; i < pageamount; i++) {
+                $(".pagination").append("<li><a href='javascript:void(0)'>"+ (i + 1) + "</a></li>");
+            }
+
+            $(".pagination li:first").addClass("active");
+
+            $(".pagination li").click(function () {
+                var page = $(this).index();
+                getPage(page);
+                $(this).addClass("active").siblings().removeClass("active");
+            })
+        });
+    </script>
+
+
+    <!-- Example row of columns -->
+    <div class="row" id="allExpressions">
+
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; 2016 Company, Inc.</p>
+    </footer>
+</div> <!-- /container -->
+
+<!-- 前端说说列表渲染模板 -->
+<script type="text/template" id="tpl">
+    <div class="col-md-4 grid">
+        <h4 class="tpl-username">
+            <img class="avatar" src="/avatar/{{= avatar }}" alt="avatar">{{= username }}说了：
+        </h4>
+        <p class="tpl-content">{{= content }}</p>
+        <p class="tpl-datetime">{{= datetime }}</p>
+        <p class="tpl-button"><a class="btn btn-default" href="#" role="button">查看详细 &raquo;</a></p>
+    </div>
+</script>
+
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+
+
+<script type="application/javascript">
+    var $allExpressions = $("#allExpressions");
+
+    //得到underscore模板
+    var compiled = _.template($("#tpl").html());
+
+    getPage(0);
+    //请求分页的说说信息
+    function getPage(page) {
+        $("#allExpressions").html("");
+        $.ajax({
+            "url": "/getAllExps?page=" + page,
+            "type": "get",
+            "success": function (result) {
+                iterator(0);
+                //迭代器
+                function iterator(i) {
+                    if (i == result.length) {
+                        return;
+                    }
+                    $.get("/getUserInfo?username=" + result[i].username, function (result2) {
+                        //修改字典，给字典增加一项
+                        result[i].avatar = result2.avatar;
+                        console.log(result[i].avatar);
+                        //组装模板
+                        var htmlstring = compiled(result[i]);
+                        //添加DOM
+                        $("#allExpressions").append($(htmlstring));
+                        iterator(i + 1);
+                    });
+                }
+            }
+        });
+
+    }
+
+
+
+
+    //点击登录按钮
+    $("#login").click(function () {
+        $.post("/doLogin", {
+            "username" : $("#username").val(),
+            "password" : $("#password").val()
+        }, function (result) {
+            if (result == "1") {
+                //登录成功
+                alert("登录成功!");
+                window.location = "/";
+            }
+            else if (result == "-1") {
+                //用户名不存在
+                $("#alert-window")
+                    .fadeIn()
+                    .html("用户名不存在！");
+            }
+            else if (result == "-2") {
+                //密码错误
+                $("#alert-window")
+                    .fadeIn()
+                    .html("密码错误！");
+            }
+            else {
+                //服务器错误
+                $("#alert-window")
+                    .fadeIn()
+                    .html("服务器出错！");
+            }
+        });
+    });
+
+    //文本框得到焦点，错误提示消失
+    $("input").focus(function () {
+        $("#alert-window").fadeOut();
+    });
+
+
+    //点击发布按钮之后做的事情
+    $("#doExpress").click(function () {
+        $.post("/doExpress", {
+            "content" : $("#content").val()
+        }, function (result) {
+            if (result == "1") {
+                //注册成功
+                alert("发布成功!");
+                window.location = "/";
+            }
+
+            else {
+                //服务器错误
+                $("#alert-window")
+                    .fadeIn()
+                    .html("服务器出错！");
+                    alert("发布失败，请联系管理员！");
+            }
+        });
+    });
+
+</script>
+
+</body>
+</html>

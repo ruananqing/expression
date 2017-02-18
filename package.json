@@ -1,0 +1,22 @@
+{
+  "name": "shuoshuo",
+  "version": "1.0.0",
+  "description": "shuoshuo",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "good"
+  ],
+  "author": "ruananqing",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.5.5",
+    "express": "^4.14.1",
+    "express-session": "^1.15.0",
+    "formidable": "^1.1.1",
+    "gm": "^1.23.0",
+    "mongodb": "^2.2.22"
+  }
+}
