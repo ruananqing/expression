@@ -327,3 +327,37 @@ exports.getAllExpsAmount = function (req, res, next) {
         res.send(count.toString());
     });
 };
+
+//列出某个用户的所有的说说
+exports.showUserExps = function (req, res, next) {
+    var user = req.params["user"];
+
+    db.find("expressions", {"username": user}, function (err, result) {
+        db.find("users", {"username": user}, function (err2, result2) {
+            res.render("user", {
+                "login": req.session.login == "1" ? true : false,
+                "username" : req.session.login == "1" ? req.session.username : "",
+                "user": user,
+                "activePage": "myExps",
+                "userExps": result,
+                "userAvatar": result2[0].avatar
+            });
+        });
+
+    });
+
+};
+
+//列出所有用户的所有的说说
+exports.showAllUsersList = function (req, res, next) {
+
+    db.find("users", {}, function (err, result) {
+        res.render("allUsersList", {
+            "login": req.session.login == "1" ? true : false,
+            "username" : req.session.login == "1" ? req.session.username : "",
+            "activePage": "allUsersList",
+            "allUsersList": result
+        });
+    });
+
+};

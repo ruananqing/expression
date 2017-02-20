@@ -67,7 +67,11 @@ app.get("/getUserInfo", router.getUserInfo);
 //列出说说总数
 app.get("/getAllExpsAmount", router.getAllExpsAmount);
 
+//列出某个用户的所有的说说
+app.get("/user/:user", router.showUserExps);
 
+//列出所有用户的所有的说说
+app.get("/allUsersList", router.showAllUsersList);
 
 /*
 app.get("/", router.);

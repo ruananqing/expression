@@ -14,8 +14,12 @@
 
             <ul class="nav navbar-nav">
                 <li <% if (activePage == "index") { %> class="active" <%}%> ><a href="/">全部说说 <span class="sr-only">(current)</span></a></li>
-                <li <% if (activePage == "myshuoshuo") { %> class="active" <%}%> ><a href="/user/<%= username %>">我的说说</a></li>
-                <li <% if (activePage == "memberslist") { %> class="active" <%}%> ><a href="/userslist">成员列表</a></li>
+
+                <% if (login) { %>
+                <li <% if (activePage == "myExps") { %> class="active" <%}%> ><a href="/user/<%= username %>">我的说说</a></li>
+                <% } %>
+
+                <li <% if (activePage == "allUsersList") { %> class="active" <%}%> ><a href="/allUsersList">成员列表</a></li>
             </ul>
 
 

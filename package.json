@@ -1,13 +1,13 @@
 {
-  "name": "shuoshuo",
+  "name": "Expression",
   "version": "1.0.0",
-  "description": "shuoshuo",
+  "description": "The project seems like a qzone system which builded by nodejs and mongodb.You can share all your expressions in Expression with other Expressers.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "good"
+    "what a nice web server system"
   ],
   "author": "ruananqing",
   "license": "ISC",
