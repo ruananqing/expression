@@ -7,6 +7,7 @@ var md5 = require("../models/md5");
 var fs = require("fs");
 var path = require("path");
 var gm = require("gm");
+var os = require("os");
 
 
 //显示首页
@@ -361,3 +362,18 @@ exports.showAllUsersList = function (req, res, next) {
     });
 
 };
+
+//显示系统参数
+exports.showCondition = function(req, res, next) {
+    var arch = os.arch();
+    var cpus = os.cpus();
+    var freemem = (os.freemem()/1024/1024).toFixed(2) + "MB" + "  " + ((os.freemem/os.totalmem)* 100).toFixed(2) + "%";
+    var platform = os.platform();
+    var release = os.release();
+    var totalmem = (os.totalmem()/1024/1024).toFixed(2) + "MB";
+    var type = os.type();
+    var usedmem = ((os.totalmem - os.freemem)/1024/1024).toFixed(2) + "MB"+ "  " + (((1 - (os.freemem/os.totalmem))*100).toFixed(2)) + "%";
+    
+    var condition = { os: { arch, cpus, freemem, platform, release, totalmem, type, usedmem } };
+    res.render("condition", condition);
+}

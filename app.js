@@ -73,6 +73,8 @@ app.get("/user/:user", router.showUserExps);
 //列出所有用户的所有的说说
 app.get("/allUsersList", router.showAllUsersList);
 
+//显示当前系统参数
+app.get("/condition", router.showCondition);
 /*
 app.get("/", router.);
 app.get("/", router.);
@@ -81,4 +83,4 @@ app.get("/", router.);
 
 
 
-app.listen(3000);
+app.listen(80);
